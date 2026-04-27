@@ -1,0 +1,16 @@
+# Haskell/Cabal
+dist-newstyle/
+.ghc.environment.*
+*.o
+*.hi
+*.hie
+
+# C++
+image
+build/
+
+# Images
+*.ppm
+
+# Other
+wezterm
