@@ -45,7 +45,7 @@ initCamera width aspect =
             { imgWidth = width
             , imgHeight = height
             , center = camCenter
-            , pixel00 = vUpLeft + fromOne 0.5 * (du + dv)
+            , pixel00 = vUpLeft + scale 0.5 (du + dv)
             , deltaU = du
             , deltaV = dv
             }
