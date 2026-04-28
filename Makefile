@@ -11,3 +11,6 @@ hsimg: hs
 
 cppimg: cpp
 	./image | wezterm imgcat
+
+hsinstall: app/Main.hs
+	cabal install -O2 --installdir=./build --overwrite-policy=always
