@@ -54,6 +54,10 @@ scale :: Double -> Vec3 -> Vec3
 scale t = v3MapAll (t *)
 
 
+(/^) :: Vec3 -> Double -> Vec3
+v /^ k = v3MapAll (/ k) v
+
+
 len :: Vec3 -> Double
 len (Vec3 x y z) = sqrt (x * x + y * y + z * z)
 
@@ -102,7 +106,7 @@ fromOne :: Double -> Vec3
 fromOne x = Vec3 x x x
 
 
-data Ix = I0 | I1 | I2 deriving (Enum, Eq, Ord, Show, Bounded)
+data Ix = I0 | I1 | I2 deriving (Bounded, Enum, Eq, Ord, Show)
 
 
 fromInt :: Int -> Ix
