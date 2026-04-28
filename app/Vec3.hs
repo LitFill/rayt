@@ -3,7 +3,7 @@
 
 module Vec3 where
 
-import Data.Function
+import Data.Function ((&))
 
 
 data Vec3 = Vec3
@@ -129,7 +129,8 @@ v ! i = at i v
 
 
 v3Print :: Vec3 -> String
-v3Print (Vec3 x y z) = show x ++ " " ++ show y ++ " " ++ show z
+v3Print (Vec3 x y z) =
+    unwords $ map show [x, y, z]
 
 
 aa, bb :: Vec3
@@ -162,4 +163,4 @@ type Color = Vec3
 colorPrint :: Color -> String
 colorPrint (Vec3 r g b) =
     let f = floor . (255.999 *)
-     in show @Int (f r) ++ " " ++ show (f g) ++ " " ++ show (f b)
+     in unwords $ map (show @Int . f) [r, g, b]
