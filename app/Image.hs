@@ -63,7 +63,8 @@ getRay cam x y =
 
 renderImage :: String
 renderImage =
-    let cam = initCamera 800 (16 / 9)
+    let width = 400 * 2
+        cam = initCamera width (16 / 9)
         header = printf "P3\n%d %d\n255\n" cam.imgWidth cam.imgHeight
 
         pixels =
