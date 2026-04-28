@@ -33,10 +33,10 @@ rayColor r
 hitSphere :: Vec3 -> Double -> Ray -> Double
 hitSphere center radius ray
     | discriminant < 0 = -1
-    | otherwise = (-b - sqrt discriminant) / (2 * a)
+    | otherwise = (h - sqrt discriminant) / a
   where
     oc = center - ray.origin
-    a = ray.direction · ray.direction
-    b = (-2) * ray.direction · oc
-    c = oc · oc - radius * radius
-    discriminant = b * b - 4 * a * c
+    a = lenSquared ray.direction
+    h = ray.direction · oc
+    c = lenSquared oc - radius * radius
+    discriminant = h * h - a * c
