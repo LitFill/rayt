@@ -138,8 +138,8 @@ aa = 1 --- Vec3 1 1 1
 bb = Vec3 (-3) 2 2
 
 
-main :: IO ()
-main = do
+test :: IO ()
+test = do
     putStrLn "=== VECTOR3 ==="
 
     putStr "a     = "

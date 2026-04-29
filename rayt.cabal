@@ -22,6 +22,7 @@ executable rayt
     other-modules:    Vec3
                     , Image
                     , Ray
+                    , Lib
     -- other-extensions:
     build-depends:    base ^>=4.22.0.0
     hs-source-dirs:   app

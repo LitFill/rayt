@@ -1,16 +1,13 @@
-{-# LANGUAGE StrictData #-}
-
-module Main (Main.main) where
+module Main where
 
 import System.Environment (getArgs)
 
 import Image
-import Vec3
+import Lib
 
 
 runVec :: IO ()
-runVec = do
-    Vec3.main
+runVec = do test
 
 
 runImage :: IO ()

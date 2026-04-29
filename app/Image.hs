@@ -4,8 +4,7 @@ module Image where
 
 import Text.Printf (printf)
 
-import Ray
-import Vec3
+import Lib
 
 
 data Camera = Camera
@@ -68,7 +67,7 @@ renderImage =
         header = printf "P3\n%d %d\n255\n" cam.imgWidth cam.imgHeight
 
         pixels =
-            [ colorPrint $ rayColor (getRay cam x y)
+            [ colorPrint . rayColor $ getRay cam x y
             | y <- [0 .. cam.imgHeight - 1]
             , x <- [0 .. cam.imgWidth - 1]
             ]

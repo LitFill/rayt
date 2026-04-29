@@ -102,3 +102,15 @@ instance Hittable Sphere where
         p = rayAt t ray
         outwardNormal = (p - center) /^ radius
         info = mkHitInfo ray outwardNormal p t
+
+
+instance (Hittable obj) => Hittable [obj] where
+    hit _ _ _ [] = Nothing
+    hit ray tmin tmax (o : os) = go False tmax initInfo os
+      where
+        initInfo = hit ray tmin tmax o
+        go _ _ acc [] = acc
+        go isHit closest acc (obj : objs) =
+            case hit ray tmin closest obj of
+                Just hitInfo -> go True hitInfo.hitT (Just hitInfo) objs
+                Nothing -> go isHit closest acc objs
