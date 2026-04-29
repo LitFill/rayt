@@ -21,7 +21,7 @@ rayColor :: Ray -> Color
 rayColor r
     | t > 0 =
         let n = normalize (rayAt t r - Vec3 0 0 (-1))
-         in scale 0.5 (n & v3MapAll (+ 1))
+         in scale 0.5 (n + 1)
     | otherwise =
         let normDir = normalize r.direction
             a = 0.5 * (normDir.y + 1)
