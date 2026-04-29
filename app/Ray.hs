@@ -3,8 +3,6 @@
 
 module Ray where
 
-import Data.Function ((&))
-
 import Vec3
 
 
@@ -46,8 +44,21 @@ data HitInfo = HitInfo
     { hitPoint :: Vec3
     , hitNormal :: Vec3
     , hitT :: Double
+    , hitFrontFace :: Bool
     }
     deriving (Show)
+
+
+mkHitInfo :: Ray -> Vec3 -> Vec3 -> Double -> HitInfo
+mkHitInfo ray normOutwardNormal point t =
+    let frontFace = ray.direction · normOutwardNormal < 0
+        normal = if frontFace then normOutwardNormal else -normOutwardNormal
+     in HitInfo
+            { hitPoint = point
+            , hitNormal = normal
+            , hitT = t
+            , hitFrontFace = frontFace
+            }
 
 
 class Hittable obj where
@@ -61,14 +72,21 @@ data Sphere = Sphere
     deriving (Show)
 
 
+mkSphere :: Vec3 -> Double -> Sphere
+mkSphere center radius =
+    Sphere center (max 0 radius)
+
+
 instance Hittable Sphere where
     hit ray tmin tmax (Sphere center radius)
         | determinant < 0 = Nothing
-        | root <= tmin || root >= tmax = Nothing
+        | isNotInValidInterval root = Nothing
         | otherwise = Just info
       where
+        isNotInValidInterval x = x <= tmin || x >= tmax
+
         oc = center - ray.origin
-        a = ray & direction & lenSquared
+        a = lenSquared ray.direction
         h = ray.direction · oc
         c = lenSquared oc - radius * radius
 
@@ -76,14 +94,11 @@ instance Hittable Sphere where
 
         sqrtd = sqrt determinant
         root' = (h - sqrtd) / a
-        root = if root' <= tmin || root' >= tmax then (h + sqrtd) / a else root'
+        root
+            | isNotInValidInterval root' = (h + sqrtd) / a
+            | otherwise = root'
 
         t = root
-        p = ray & rayAt t
-        normal = (p - center) /^ radius
-        info =
-            HitInfo
-                { hitT = t
-                , hitPoint = p
-                , hitNormal = normal
-                }
+        p = rayAt t ray
+        outwardNormal = (p - center) /^ radius
+        info = mkHitInfo ray outwardNormal p t
