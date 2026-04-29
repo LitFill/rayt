@@ -9,8 +9,5 @@ dist-newstyle/
 image
 build/
 
-# Images
-*.ppm
-
 # Other
 wezterm
