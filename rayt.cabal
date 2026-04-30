@@ -23,6 +23,7 @@ executable rayt
                     , Image
                     , Ray
                     , Lib
+                    , Interval
     -- other-extensions:
     build-depends:    base ^>=4.22.0.0
     hs-source-dirs:   app

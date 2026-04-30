@@ -1,16 +1,13 @@
 module Lib
-    ( infinity
-    , degrees2radians
+    ( degrees2radians
+    , module Interval
     , module Ray
     , module Vec3
     ) where
 
+import Interval
 import Ray
 import Vec3
-
-
-infinity :: Double
-infinity = 1 / 0
 
 
 degrees2radians :: Double -> Double

@@ -3,6 +3,7 @@
 
 module Ray where
 
+import Interval (Interval (..), surrounds)
 import Vec3
 
 
@@ -62,7 +63,7 @@ mkHitInfo ray normOutwardNormal point t =
 
 
 class Hittable obj where
-    hit :: Ray -> Double -> Double -> obj -> Maybe HitInfo
+    hit :: Ray -> Interval -> obj -> Maybe HitInfo
 
 
 data Sphere = Sphere
@@ -78,13 +79,11 @@ mkSphere center radius =
 
 
 instance Hittable Sphere where
-    hit ray tmin tmax (Sphere center radius)
+    hit ray rayT (Sphere center radius)
         | determinant < 0 = Nothing
-        | isNotInValidInterval root = Nothing
+        | not $ surrounds root rayT = Nothing
         | otherwise = Just info
       where
-        isNotInValidInterval x = x <= tmin || x >= tmax
-
         oc = center - ray.origin
         a = lenSquared ray.direction
         h = ray.direction · oc
@@ -95,7 +94,7 @@ instance Hittable Sphere where
         sqrtd = sqrt determinant
         root' = (h - sqrtd) / a
         root
-            | isNotInValidInterval root' = (h + sqrtd) / a
+            | not $ surrounds root' rayT = (h + sqrtd) / a
             | otherwise = root'
 
         t = root
@@ -104,13 +103,21 @@ instance Hittable Sphere where
         info = mkHitInfo ray outwardNormal p t
 
 
+-- instance (Hittable obj) => Hittable [obj] where
+--     hit ray tmin tmax = go tmax Nothing
+--       where
+--         go _ acc [] = acc
+--         go closest acc (obj : objs) =
+--             let currentClosest = maybe closest hitT acc
+--              in case hit ray tmin currentClosest obj of
+--                     Just hitInfo -> go hitInfo.hitT (Just hitInfo) objs
+--                     Nothing -> go closest acc objs
+
 instance (Hittable obj) => Hittable [obj] where
-    hit _ _ _ [] = Nothing
-    hit ray tmin tmax (o : os) = go False tmax initInfo os
+    hit ray rayT = foldl' findClosest Nothing
       where
-        initInfo = hit ray tmin tmax o
-        go _ _ acc [] = acc
-        go isHit closest acc (obj : objs) =
-            case hit ray tmin closest obj of
-                Just hitInfo -> go True hitInfo.hitT (Just hitInfo) objs
-                Nothing -> go isHit closest acc objs
+        findClosest acc obj =
+            let currentTMax = maybe rayT.intervalMax hitT acc
+             in case hit ray rayT {intervalMax = currentTMax} obj of
+                    Just info -> Just info
+                    Nothing -> acc

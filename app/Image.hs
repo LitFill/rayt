@@ -40,11 +40,12 @@ initCamera width aspect =
                 - vu /^ 2 -- the X element
                 - vv /^ 2 -- the Y element
                 - Vec3 0 0 focalLength -- the Z element
+        pixel00 = vUpLeft + scale 0.5 (du + dv)
      in Camera
             { imgWidth = width
             , imgHeight = height
             , center = camCenter
-            , pixel00 = vUpLeft + scale 0.5 (du + dv)
+            , pixel00 = pixel00
             , deltaU = du
             , deltaV = dv
             }
@@ -66,9 +67,25 @@ renderImage =
         cam = initCamera width (16 / 9)
         header = printf "P3\n%d %d\n255\n" cam.imgWidth cam.imgHeight
 
+        world =
+            [ Sphere (Vec3 0 0 (-1)) 0.5
+            , Sphere (Vec3 0 (-100.5) (-1)) 100
+            ]
+
         pixels =
-            [ colorPrint . rayColor $ getRay cam x y
+            [ colorPrint . rayColor' world $ getRay cam x y
             | y <- [0 .. cam.imgHeight - 1]
             , x <- [0 .. cam.imgWidth - 1]
             ]
      in header ++ unlines pixels
+
+
+rayColor' :: (Hittable obj) => obj -> Ray -> Vec3
+rayColor' world ray =
+    -- maybe lerped (\i -> scale 0.5 (i.hitNormal + 1)) info
+    maybe lerped (scale 0.5 . (+ 1) . hitNormal) info
+  where
+    info = hit ray (0 :..: infinity) world
+    normDirection = normalize ray.direction
+    a = 0.5 * (normDirection.y + 1)
+    lerped = scale (1 - a) 1 + scale a (Vec3 0.5 0.75 1)
