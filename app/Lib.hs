@@ -3,8 +3,10 @@ module Lib
     , module Interval
     , module Ray
     , module Vec3
+    , module Camera
     ) where
 
+import Camera
 import Interval
 import Ray
 import Vec3

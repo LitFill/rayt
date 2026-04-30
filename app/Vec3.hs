@@ -98,9 +98,6 @@ normalize :: Vec3 -> Vec3
 normalize v = v3MapAll (/ len v) v
 
 
--- empty :: Vec3
--- empty = Vec3 0 0 0
-
 fromOne :: Double -> Vec3
 fromOne x = Vec3 x x x
 

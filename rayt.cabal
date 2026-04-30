@@ -24,6 +24,7 @@ executable rayt
                     , Ray
                     , Lib
                     , Interval
+                    , Camera
     -- other-extensions:
     build-depends:    base ^>=4.22.0.0
     hs-source-dirs:   app

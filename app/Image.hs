@@ -1,91 +1,14 @@
-{-# LANGUAGE OverloadedRecordDot #-}
-
 module Image where
-
-import Text.Printf (printf)
 
 import Lib
 
 
-data Camera = Camera
-    { imgWidth :: Int
-    , imgHeight :: Int
-    , center :: Vec3
-    , pixel00 :: Vec3
-    , deltaU :: Vec3
-    , deltaV :: Vec3
-    }
-    deriving (Show)
-
-
-initCamera :: Int -> Double -> Camera
-initCamera width aspect =
-    let height = max 1 (floor $ fromIntegral width / aspect)
-        -- viewport
-        vpH = 2.0
-        vpW = vpH * (fromIntegral width / fromIntegral height)
-        focalLength = 1
-        camCenter = 0
-
-        -- viewport vecor U → and V ↓
-        vu = Vec3 vpW 0 0
-        vv = Vec3 0 (-vpH) 0
-
-        -- pixel deltas
-        du = vu /^ fromIntegral width
-        dv = vv /^ fromIntegral height
-
-        vUpLeft =
-            camCenter -- the center  (0,0)
-                - vu /^ 2 -- the X element
-                - vv /^ 2 -- the Y element
-                - Vec3 0 0 focalLength -- the Z element
-        pixel00 = vUpLeft + scale 0.5 (du + dv)
-     in Camera
-            { imgWidth = width
-            , imgHeight = height
-            , center = camCenter
-            , pixel00 = pixel00
-            , deltaU = du
-            , deltaV = dv
-            }
-
-
-getRay :: Camera -> Int -> Int -> Ray
-getRay cam x y =
-    let pxlCenter =
-            cam.pixel00
-                + fromIntegral x * cam.deltaU
-                + fromIntegral y * cam.deltaV
-        rayDir = pxlCenter - cam.center
-     in Ray cam.center rayDir
-
-
 renderImage :: String
-renderImage =
-    let width = 400 * 2
-        cam = initCamera width (16 / 9)
-        header = printf "P3\n%d %d\n255\n" cam.imgWidth cam.imgHeight
-
-        world =
-            [ Sphere (Vec3 0 0 (-1)) 0.5
-            , Sphere (Vec3 0 (-100.5) (-1)) 100
-            ]
-
-        pixels =
-            [ colorPrint . rayColor' world $ getRay cam x y
-            | y <- [0 .. cam.imgHeight - 1]
-            , x <- [0 .. cam.imgWidth - 1]
-            ]
-     in header ++ unlines pixels
-
-
-rayColor' :: (Hittable obj) => obj -> Ray -> Vec3
-rayColor' world ray =
-    -- maybe lerped (\i -> scale 0.5 (i.hitNormal + 1)) info
-    maybe lerped (scale 0.5 . (+ 1) . hitNormal) info
+renderImage = render imageWidth aspectRatio world
   where
-    info = hit ray (0 :..: infinity) world
-    normDirection = normalize ray.direction
-    a = 0.5 * (normDirection.y + 1)
-    lerped = scale (1 - a) 1 + scale a (Vec3 0.5 0.75 1)
+    imageWidth = 400 * 2
+    aspectRatio = (16 / 9)
+    world =
+        [ Sphere (Vec3 0 0 (-1)) 0.5
+        , Sphere (Vec3 0 (-100.5) (-1)) 100
+        ]
