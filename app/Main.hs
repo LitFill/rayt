@@ -19,7 +19,7 @@ handleArgs :: [String] -> IO ()
 handleArgs = \case
     ["vec"] -> runVec
     ["img"] -> runImage
-    _ -> putStrLn "usage: <program> {vec,img}"
+    _ -> putStrLn "usage: rayt {vec,img}"
 
 
 main :: IO ()
