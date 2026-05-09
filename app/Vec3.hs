@@ -1,9 +1,13 @@
 {-# LANGUAGE OverloadedRecordDot #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StrictData #-}
 
 module Vec3 where
 
 import Data.Function ((&))
+
+import Interval
+import Random (random, randomI)
 
 
 data Vec3 = Vec3
@@ -20,24 +24,29 @@ instance Num Vec3 where
     signum (Vec3 x y z) = Vec3 (signum x) (signum y) (signum z)
 
 
+{-# INLINABLE add #-}
 add :: Vec3 -> Vec3 -> Vec3
 add a b =
     Vec3 (a.x + b.x) (a.y + b.y) (a.z + b.z)
 
 
+{-# INLINABLE sub #-}
 sub :: Vec3 -> Vec3 -> Vec3
 sub a b =
     Vec3 (a.x - b.x) (a.y - b.y) (a.z - b.z)
 
 
+{-# INLINABLE v3MapAll #-}
 v3MapAll :: (Double -> Double) -> Vec3 -> Vec3
 v3MapAll f (Vec3 x y z) = Vec3 (f x) (f y) (f z)
 
 
+{-# INLINABLE v3ZipWith #-}
 v3ZipWith :: (Double -> Double -> Double) -> Vec3 -> Vec3 -> Vec3
 v3ZipWith f a b = Vec3 (f a.x b.x) (f a.y b.y) (f a.z b.z)
 
 
+{-# INLINABLE v3Fold #-}
 v3Fold :: (Double -> Double -> Double) -> Vec3 -> Double
 v3Fold f (Vec3 x y z) = x `f` y `f` z
 
@@ -50,14 +59,17 @@ sub' :: Vec3 -> Vec3 -> Vec3
 sub' = v3ZipWith (-)
 
 
+{-# INLINABLE scale #-}
 scale :: Double -> Vec3 -> Vec3
 scale t = v3MapAll (t *)
 
 
+{-# INLINABLE (/^) #-}
 (/^) :: Vec3 -> Double -> Vec3
 v /^ k = v3MapAll (/ k) v
 
 
+{-# INLINABLE len #-}
 len :: Vec3 -> Double
 len (Vec3 x y z) = sqrt (x * x + y * y + z * z)
 
@@ -66,14 +78,17 @@ len' :: Vec3 -> Double
 len' v = sqrt . v3Fold (+) $ v3ZipWith (*) v v
 
 
+{-# INLINABLE lenSquared #-}
 lenSquared :: Vec3 -> Double
 lenSquared v = v & v3ZipWith (*) v & v3Fold (+)
 
 
+{-# INLINABLE dot #-}
 dot :: Vec3 -> Vec3 -> Double
 dot a b = a.x * b.x + a.y * b.y + a.z * b.z
 
 
+{-# INLINABLE (·) #-}
 (·) :: Vec3 -> Vec3 -> Double
 (·) = dot
 
@@ -82,6 +97,7 @@ dot' :: Vec3 -> Vec3 -> Double
 dot' a b = v3Fold (+) $ v3ZipWith (*) a b
 
 
+{-# INLINABLE cross #-}
 cross :: Vec3 -> Vec3 -> Vec3
 cross a b =
     Vec3
@@ -90,12 +106,19 @@ cross a b =
         (a.x * b.y - a.y * b.x)
 
 
+{-# INLINABLE (×) #-}
 (×) :: Vec3 -> Vec3 -> Vec3
 (×) = cross
 
 
+{-# INLINABLE normalize #-}
 normalize :: Vec3 -> Vec3
 normalize v = v3MapAll (/ len v) v
+
+
+{-# INLINABLE unitize #-}
+unitize :: Vec3 -> Vec3
+unitize = normalize
 
 
 fromOne :: Double -> Vec3
@@ -129,6 +152,39 @@ v3Print (Vec3 x y z) =
     unwords $ map show [x, y, z]
 
 
+v3Random :: IO Vec3
+v3Random = do
+    x <- random
+    y <- random
+    z <- random
+    pure Vec3 {..}
+
+
+v3RandomI :: Interval -> IO Vec3
+v3RandomI iv = do
+    x <- randomI iv
+    y <- randomI iv
+    z <- randomI iv
+    pure Vec3 {..}
+
+
+v3RandomUnit :: IO Vec3
+v3RandomUnit = do
+    v <- v3RandomI (-1 :..: 1)
+    let lenSq = lenSquared v
+    if 1e-160 < lenSq && lenSq <= 1
+        then pure $ v /^ sqrt lenSq
+        else v3RandomUnit
+
+
+v3RandomOnHemisphere :: Vec3 -> IO Vec3
+v3RandomOnHemisphere normal = do
+    onUnitSphere <- v3RandomUnit
+    if onUnitSphere `dot` normal > 0
+        then return onUnitSphere
+        else return (-onUnitSphere)
+
+
 aa, bb :: Vec3
 aa = 1 --- Vec3 1 1 1
 bb = Vec3 (-3) 2 2
@@ -151,12 +207,3 @@ test = do
     print $ aa `add` bb
     putStr "b - a = "
     print $ bb `sub` aa
-
-
-type Color = Vec3
-
-
-colorPrint :: Color -> String
-colorPrint (Vec3 r g b) =
-    let f = floor . (255.999 *)
-     in unwords $ map (show @Int . f) [r, g, b]
