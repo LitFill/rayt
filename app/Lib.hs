@@ -1,13 +1,15 @@
 module Lib
-    ( degrees2radians
+    ( module Camera
     , module Interval
     , module Ray
     , module Vec3
-    , module Camera
+    , module Random
+    , degrees2radians
     ) where
 
 import Camera
 import Interval
+import Random
 import Ray
 import Vec3
 
