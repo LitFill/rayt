@@ -1,13 +1,14 @@
-# Haskell/Cabal
-dist-newstyle/
-.ghc.environment.*
-*.o
-*.hi
-*.hie
+*
 
-# C++
-image
-build/
+!app
+!app/**
+!assets
+!assets/**
 
-# Other
-wezterm
+!.gitignore
+!CHANGELOG.md
+!image.cc
+!LICENSE
+!Makefile
+!rayt.cabal
+!README.md
