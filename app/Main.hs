@@ -12,7 +12,7 @@ runVec = do test
 
 runImage :: IO ()
 runImage = do
-    putStr renderImage
+    renderImage
 
 
 handleArgs :: [String] -> IO ()
