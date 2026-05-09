@@ -3,6 +3,8 @@
 
 module Ray where
 
+import Control.Applicative ((<|>))
+
 import Interval (Interval (..), surrounds)
 import Vec3
 
@@ -95,6 +97,4 @@ instance (Hittable obj) => Hittable [obj] where
       where
         findClosest acc obj =
             let currentTMax = maybe rayT.intervalMax hitT acc
-             in case hit ray rayT {intervalMax = currentTMax} obj of
-                    Just info -> Just info
-                    Nothing -> acc
+             in hit ray rayT {intervalMax = currentTMax} obj <|> acc

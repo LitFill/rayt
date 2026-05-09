@@ -170,7 +170,7 @@ v3RandomI iv = do
 
 v3RandomUnit :: IO Vec3
 v3RandomUnit = do
-    v <- v3RandomI (-1 :..: 1)
+    v <- v3RandomI ((-1) :..: 1)
     let lenSq = lenSquared v
     if 1e-160 < lenSq && lenSq <= 1
         then pure $ v /^ sqrt lenSq
