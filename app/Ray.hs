@@ -12,7 +12,7 @@ data Ray = Ray
     deriving (Show)
 
 
-{-# INLINABLE rayAt #-}
+{-# INLINEABLE rayAt #-}
 rayAt :: Double -> Ray -> Vec3
 rayAt t (Ray og dr) = og + scale t dr
 
@@ -26,7 +26,7 @@ data HitInfo = HitInfo
     deriving (Show)
 
 
-{-# INLINABLE mkHitInfo #-}
+{-# INLINEABLE mkHitInfo #-}
 mkHitInfo :: Ray -> Vec3 -> Vec3 -> Double -> HitInfo
 mkHitInfo ray normOutwardNormal point t =
     let frontFace = ray.direction · normOutwardNormal < 0

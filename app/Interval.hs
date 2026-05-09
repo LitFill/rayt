@@ -29,22 +29,22 @@ instance Show Interval where
     show (iMin :..: iMax) = printf "[%0.3f ... %0.3f]" iMin iMax
 
 
-{-# INLINABLE size #-}
+{-# INLINEABLE size #-}
 size :: Interval -> Double
 size (iMin :..: iMax) = iMax - iMin
 
 
-{-# INLINABLE contains #-}
+{-# INLINEABLE contains #-}
 contains :: Double -> Interval -> Bool
 contains n (iMin :..: iMax) = n >= iMin && n <= iMax
 
 
-{-# INLINABLE surrounds #-}
+{-# INLINEABLE surrounds #-}
 surrounds :: Double -> Interval -> Bool
 surrounds n (iMin :..: iMax) = n > iMin && n < iMax
 
 
-{-# INLINABLE clamp #-}
+{-# INLINEABLE clamp #-}
 clamp :: Double -> Interval -> Double
 clamp n (iMin :..: iMax)
     | n < iMin = iMin

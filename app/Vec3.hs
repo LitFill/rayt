@@ -24,29 +24,29 @@ instance Num Vec3 where
     signum (Vec3 x y z) = Vec3 (signum x) (signum y) (signum z)
 
 
-{-# INLINABLE add #-}
+{-# INLINEABLE add #-}
 add :: Vec3 -> Vec3 -> Vec3
 add a b =
     Vec3 (a.x + b.x) (a.y + b.y) (a.z + b.z)
 
 
-{-# INLINABLE sub #-}
+{-# INLINEABLE sub #-}
 sub :: Vec3 -> Vec3 -> Vec3
 sub a b =
     Vec3 (a.x - b.x) (a.y - b.y) (a.z - b.z)
 
 
-{-# INLINABLE v3MapAll #-}
+{-# INLINEABLE v3MapAll #-}
 v3MapAll :: (Double -> Double) -> Vec3 -> Vec3
 v3MapAll f (Vec3 x y z) = Vec3 (f x) (f y) (f z)
 
 
-{-# INLINABLE v3ZipWith #-}
+{-# INLINEABLE v3ZipWith #-}
 v3ZipWith :: (Double -> Double -> Double) -> Vec3 -> Vec3 -> Vec3
 v3ZipWith f a b = Vec3 (f a.x b.x) (f a.y b.y) (f a.z b.z)
 
 
-{-# INLINABLE v3Fold #-}
+{-# INLINEABLE v3Fold #-}
 v3Fold :: (Double -> Double -> Double) -> Vec3 -> Double
 v3Fold f (Vec3 x y z) = x `f` y `f` z
 
@@ -59,17 +59,17 @@ sub' :: Vec3 -> Vec3 -> Vec3
 sub' = v3ZipWith (-)
 
 
-{-# INLINABLE scale #-}
+{-# INLINEABLE scale #-}
 scale :: Double -> Vec3 -> Vec3
 scale t = v3MapAll (t *)
 
 
-{-# INLINABLE (/^) #-}
+{-# INLINEABLE (/^) #-}
 (/^) :: Vec3 -> Double -> Vec3
 v /^ k = v3MapAll (/ k) v
 
 
-{-# INLINABLE len #-}
+{-# INLINEABLE len #-}
 len :: Vec3 -> Double
 len (Vec3 x y z) = sqrt (x * x + y * y + z * z)
 
@@ -78,17 +78,17 @@ len' :: Vec3 -> Double
 len' v = sqrt . v3Fold (+) $ v3ZipWith (*) v v
 
 
-{-# INLINABLE lenSquared #-}
+{-# INLINEABLE lenSquared #-}
 lenSquared :: Vec3 -> Double
 lenSquared v = v & v3ZipWith (*) v & v3Fold (+)
 
 
-{-# INLINABLE dot #-}
+{-# INLINEABLE dot #-}
 dot :: Vec3 -> Vec3 -> Double
 dot a b = a.x * b.x + a.y * b.y + a.z * b.z
 
 
-{-# INLINABLE (·) #-}
+{-# INLINEABLE (·) #-}
 (·) :: Vec3 -> Vec3 -> Double
 (·) = dot
 
@@ -97,7 +97,7 @@ dot' :: Vec3 -> Vec3 -> Double
 dot' a b = v3Fold (+) $ v3ZipWith (*) a b
 
 
-{-# INLINABLE cross #-}
+{-# INLINEABLE cross #-}
 cross :: Vec3 -> Vec3 -> Vec3
 cross a b =
     Vec3
@@ -106,17 +106,17 @@ cross a b =
         (a.x * b.y - a.y * b.x)
 
 
-{-# INLINABLE (×) #-}
+{-# INLINEABLE (×) #-}
 (×) :: Vec3 -> Vec3 -> Vec3
 (×) = cross
 
 
-{-# INLINABLE normalize #-}
+{-# INLINEABLE normalize #-}
 normalize :: Vec3 -> Vec3
 normalize v = v3MapAll (/ len v) v
 
 
-{-# INLINABLE unitize #-}
+{-# INLINEABLE unitize #-}
 unitize :: Vec3 -> Vec3
 unitize = normalize
 

@@ -92,7 +92,7 @@ render' imgW aspect samplePerPxl maxDepth world = do
 {- | Construct a camera ray originating originating from the origin and
 directed at randomly sampled point around the pixel location (x, y)
 -}
-{-# INLINABLE getRay #-}
+{-# INLINEABLE getRay #-}
 getRay :: Camera -> Int -> Int -> IO Ray
 getRay cam x y = do
     offset <- sampleSquare
@@ -163,7 +163,7 @@ rayColor depth world ray
 {- | Returns the vector to the random point in the inclusive range
 (-.5, +.5) - (-.5, +.5)
 -}
-{-# INLINABLE sampleSquare #-}
+{-# INLINEABLE sampleSquare #-}
 sampleSquare :: IO Vec3
 sampleSquare = do
     r1 <- random
